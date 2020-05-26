@@ -1,4 +1,4 @@
-## Modulární-úřad
+# [Modulární-úřad](https://github.com/modularni-urad)
 
 > Každý trvale udržitelný software je modulární.
 Modularita je to, co zoufale chybí software ve samosprávách.
