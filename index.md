@@ -4,8 +4,11 @@
 Modularita je to, co zoufale chybí software ve samosprávách.
 A je to právě modularita, co je tím hlavním atributem projektů modulárního-úřadu.
 
-Modul je malá komponenta, která dělá přesně to, co má. 
-Je deployovatelná přes docker container.
+Modul je malá komponenta, která:
+- dělá přesně to, co má a nic navíc. 
+- je deployovatelná jako docker container, tudíž řešení se dá orchestrovat např. pomocí [kubernetes](https://kubernetes.io/).
+- nabízí API - ovládaní přes web applikaci, možnost napsat aplikace na telefon, integrovatelnost.
+
 S pomocí dalších otevřených modulů, tovoří logický celek.
 [Schéma modulů](https://github.com/modularni-urad/modularni-urad.github.io/blob/master/doc/architecture.plant) je na obrázku:
 
