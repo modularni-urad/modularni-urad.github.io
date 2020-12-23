@@ -19,51 +19,52 @@ node "Citizen WebApp" as cwa {
 cloud Internet {
 }
 
-node "Nginx docker\nSSL, custom domain, ..." as nginx {
-    [/api/paro] as ngParo
-    [/api/geopartip] as ngGeoPartip
-    [/api/auth] as ngAuth
-    [/api/taskman] as ngTaskman
-}
-
-node "Auth Docker" {
-    [Auth] as auth
-}
 node NIA
 database "user\ndatabase" as UserDB
-node "PaRo Docker" {
-    node [PaRo] as paro {
-        [auth middleware] as authMWParo
-    }
-}
-node "GEOPartip Docker" {
-    node [GEOPartip] as geoPartip {
-        [auth middleware] as authMWGeoPartip
-    }
-}
 
-node "Taskman Docker" {
-    [Python Taskman] as taskman
-    note right of taskman
-        Komponenty lze psát
-        i v jiných jazycích
-    end note
-}
-node "Postgre Docker" {
-    database "PostgreSQL" as postgre
-}
-node "Redis docker" {
-    database redis
-    note left of redis
-        Uchovává sessions
-    end note
+node "K8S cluster" {
+    node "Ingress controler" as ingress {
+        [/api/paro] as ngParo
+        [/api/geopartip] as ngGeoPartip
+        [/api/auth] as ngAuth
+        [/api/taskman] as ngTaskman
+    }
+    node "Auth Docker" {
+        [Auth] as auth
+    }
+    node "PaRo Docker" {
+        node [PaRo] as paro {
+            [auth middleware] as authMWParo
+        }
+    }
+    node "GEOPartip Docker" {
+        node [GEOPartip] as geoPartip {
+            [auth middleware] as authMWGeoPartip
+        }
+    }
+    node "Taskman Docker" {
+        [Python Taskman] as taskman
+        note right of taskman
+            Komponenty lze psát
+            i v jiných jazycích
+        end note
+    }
+    node "Postgre Docker" {
+        database "PostgreSQL" as postgre
+    }
+    node "Redis docker" {
+        database redis
+        note left of redis
+            Uchovává sessions
+        end note
+    }
 }
 
 Admin -down-> awa
 Citizen -down-> cwa
 awa -down-> Internet
 cwa -down-> Internet
-Internet -down-> nginx
+Internet -down-> ingress
 
 ngParo -down-> paro: request with\nsessionID\ncookie
 ngGeoPartip -down-> geoPartip: request with\nsessionID\ncookie
