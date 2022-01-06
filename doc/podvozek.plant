@@ -1,0 +1,46 @@
+@startuml
+title modularni-urad API
+
+cloud Internet
+
+node NIA
+
+cloud "WG cluster" {
+  node "Ingress controler (nginx)" as ingress {
+    [modurad.otevrenamesta.cz] as ngApi
+  }
+  node "api server" {
+    node "podvozek" {
+      node "Auth Docker" {
+          [Auth] as auth
+      }
+      node "PaRo Docker" {
+          node [PaRo] as paro {
+              [auth middleware] as authMWParo
+          }
+      }
+      node "GEOPartip Docker" {
+          node [GEOPartip] as geoPartip {
+              [auth middleware] as authMWGeoPartip
+          }
+      }
+      node "Taskman Docker" {
+          [Python Taskman] as taskman
+      }
+    }
+  }
+  node "Postgre Container" {
+    database "PostgreSQL" as postgre
+  }
+}
+
+Internet -down-> ingress
+
+ngApi -down-> podvozek
+auth -up-> ngAuth: sessionID\ncookie
+NIA --> auth: info z\ncentralnich\nregistru
+
+paro -down-> postgre
+geoPartip -down-> postgre
+taskman -down-> postgre
+@enduml
