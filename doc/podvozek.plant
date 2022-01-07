@@ -5,28 +5,30 @@ cloud Internet
 
 node NIA
 
-cloud "WG cluster" {
+cloud "WireGuard cluster" {
   node "Ingress controler (nginx)" as ingress {
     [modurad.otevrenamesta.cz] as ngApi
   }
   node "api server" {
-    node "podvozek" {
-      node "Auth Docker" {
+    node "podvozek" #A9DCDF {
+      component "Auth" {
           [Auth] as auth
       }
-      node "PaRo Docker" {
-          node [PaRo] as paro {
-              [auth middleware] as authMWParo
-          }
+      component [PaRo] as paro {
+          [auth middleware] as authMWParo
       }
-      node "GEOPartip Docker" {
-          node [GEOPartip] as geoPartip {
-              [auth middleware] as authMWGeoPartip
-          }
+      component [GEOPartip] as geoPartip {
+          [auth middleware] as authMWGeoPartip
       }
-      node "Taskman Docker" {
+      component [Taskman] {
           [Python Taskman] as taskman
       }
+    }
+    folder "tenant configs" {
+      file "mutabor (tenant1)" as tenant1
+      file "omesta (tenant2)" as tenant2
+    }
+    node "JWTSessionManager" as session {
     }
   }
   node "Postgre Container" {
@@ -37,7 +39,8 @@ cloud "WG cluster" {
 Internet -down-> ingress
 
 ngApi -down-> podvozek
-auth -up-> ngAuth: sessionID\ncookie
+auth -down-> session: sessionID\ncookie
+authMWParo -down-> session: sessionID\ncookie
 NIA --> auth: info z\ncentralnich\nregistru
 
 paro -down-> postgre
